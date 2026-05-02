@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#06010f" />
+  <title>RANDOMIZER // CYBER ARCADE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated matrix / grid backdrop -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <header class="hud">
+    <div class="brand">
+      <span class="logo-glyph">▣</span>
+      <h1 class="title glitch" data-text="RANDOMIZER">RANDOMIZER</h1>
+      <span class="subtitle">// cyber arcade v1.0</span>
+    </div>
+    <div class="hud-controls">
+      <button id="sound-toggle" class="chip" aria-pressed="false" title="Toggle sound">
+        <span class="chip-led"></span>
+        <span class="chip-label">SND <span id="sound-state">OFF</span></span>
+      </button>
+      <button id="reset-btn" class="chip danger" title="Reset history & state">
+        <span class="chip-label">RESET</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Randomizer sections">
+    <button class="tab active" data-section="cards" role="tab" aria-selected="true">
+      <span class="tab-icon">♠</span><span class="tab-label">CARDS</span>
+    </button>
+    <button class="tab" data-section="dice" role="tab" aria-selected="false">
+      <span class="tab-icon">⚄</span><span class="tab-label">DICE</span>
+    </button>
+    <button class="tab" data-section="coin" role="tab" aria-selected="false">
+      <span class="tab-icon">◉</span><span class="tab-label">COIN</span>
+    </button>
+    <button class="tab" data-section="uno" role="tab" aria-selected="false">
+      <span class="tab-icon">▦</span><span class="tab-label">UNO</span>
+    </button>
+    <button class="tab surprise" data-section="random" role="tab" aria-selected="false">
+      <span class="tab-icon">✦</span><span class="tab-label">SURPRISE</span>
+    </button>
+  </nav>
+
+  <main class="stage">
+    <!-- =================== CARDS =================== -->
+    <section id="section-cards" class="panel active" role="tabpanel">
+      <div class="panel-head">
+        <h2>PLAYING CARDS</h2>
+        <p>52-card deck · live shuffle · neon flip</p>
+      </div>
+      <div class="panel-body cards-body">
+        <div class="card-stage">
+          <div id="playing-card" class="playing-card">
+            <div class="pc-face pc-back">
+              <div class="pc-back-art"></div>
+            </div>
+            <div class="pc-face pc-front">
+              <div class="pc-corner pc-corner-top"><span class="pc-rank"></span><span class="pc-suit"></span></div>
+              <div class="pc-center"><span class="pc-suit-large"></span></div>
+              <div class="pc-corner pc-corner-bot"><span class="pc-rank"></span><span class="pc-suit"></span></div>
+            </div>
+          </div>
+          <div class="deck-stack" aria-hidden="true">
+            <div class="deck-card"></div>
+            <div class="deck-card"></div>
+            <div class="deck-card"></div>
+            <div class="deck-card"></div>
+          </div>
+        </div>
+        <div class="result-readout" id="cards-readout" aria-live="polite">
+          <span class="rr-label">DRAW:</span>
+          <span class="rr-value">— —</span>
+        </div>
+        <div class="actions">
+          <button class="neon-btn primary" data-action="draw-card">
+            <span class="nb-text">▶ DRAW CARD</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== DICE =================== -->
+    <section id="section-dice" class="panel" role="tabpanel">
+      <div class="panel-head">
+        <h2>DICE ROLLER</h2>
+        <p>d6 · d8 · d16 · physics-style bounce</p>
+      </div>
+      <div class="panel-body dice-body">
+        <div class="selector">
+          <label class="seg-btn active" data-die="6">
+            <input type="radio" name="die" value="6" checked>
+            <span>d6</span>
+          </label>
+          <label class="seg-btn" data-die="8">
+            <input type="radio" name="die" value="8">
+            <span>d8</span>
+          </label>
+          <label class="seg-btn" data-die="16">
+            <input type="radio" name="die" value="16">
+            <span>d16</span>
+          </label>
+        </div>
+        <div class="dice-stage">
+          <div id="die" class="die" data-shape="d6">
+            <div class="die-face f1"><span>1</span></div>
+            <div class="die-face f2"><span>2</span></div>
+            <div class="die-face f3"><span>3</span></div>
+            <div class="die-face f4"><span>4</span></div>
+            <div class="die-face f5"><span>5</span></div>
+            <div class="die-face f6"><span>6</span></div>
+          </div>
+          <div class="die-shadow"></div>
+        </div>
+        <div class="result-readout" id="dice-readout" aria-live="polite">
+          <span class="rr-label">ROLL:</span>
+          <span class="rr-value">—</span>
+        </div>
+        <div class="actions">
+          <button class="neon-btn primary" data-action="roll-dice">
+            <span class="nb-text">▶ ROLL DICE</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== COIN =================== -->
+    <section id="section-coin" class="panel" role="tabpanel">
+      <div class="panel-head">
+        <h2>COIN FLIP</h2>
+        <p>heads or tails · gravity arc</p>
+      </div>
+      <div class="panel-body coin-body">
+        <div class="coin-stage">
+          <div id="coin" class="coin">
+            <div class="coin-face heads">
+              <div class="coin-rim"></div>
+              <span class="coin-symbol">H</span>
+              <span class="coin-text">HEADS</span>
+            </div>
+            <div class="coin-face tails">
+              <div class="coin-rim"></div>
+              <span class="coin-symbol">T</span>
+              <span class="coin-text">TAILS</span>
+            </div>
+          </div>
+          <div class="coin-shadow"></div>
+        </div>
+        <div class="result-readout" id="coin-readout" aria-live="polite">
+          <span class="rr-label">RESULT:</span>
+          <span class="rr-value">—</span>
+        </div>
+        <div class="actions">
+          <button class="neon-btn primary" data-action="flip-coin">
+            <span class="nb-text">▶ FLIP COIN</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== UNO =================== -->
+    <section id="section-uno" class="panel" role="tabpanel">
+      <div class="panel-head">
+        <h2>UNO DECK</h2>
+        <p>colors + numbers + action cards</p>
+      </div>
+      <div class="panel-body uno-body">
+        <div class="card-stage">
+          <div id="uno-card" class="uno-card">
+            <div class="uc-face uc-back">
+              <div class="uc-back-oval">UNO</div>
+            </div>
+            <div class="uc-face uc-front">
+              <div class="uc-corner uc-corner-top"></div>
+              <div class="uc-center-oval">
+                <span class="uc-symbol"></span>
+              </div>
+              <div class="uc-corner uc-corner-bot"></div>
+            </div>
+          </div>
+          <div class="deck-stack" aria-hidden="true">
+            <div class="deck-card uno-back"></div>
+            <div class="deck-card uno-back"></div>
+            <div class="deck-card uno-back"></div>
+            <div class="deck-card uno-back"></div>
+          </div>
+        </div>
+        <div class="result-readout" id="uno-readout" aria-live="polite">
+          <span class="rr-label">PICK:</span>
+          <span class="rr-value">—</span>
+        </div>
+        <div class="actions">
+          <button class="neon-btn primary" data-action="pick-uno">
+            <span class="nb-text">▶ PICK UNO CARD</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== RANDOM MODE =================== -->
+    <section id="section-random" class="panel" role="tabpanel">
+      <div class="panel-head">
+        <h2>SURPRISE ME</h2>
+        <p>random feature · auto-trigger</p>
+      </div>
+      <div class="panel-body random-body">
+        <div class="random-readout">
+          <div class="random-glyph" id="random-glyph">?</div>
+          <div class="random-info">
+            <div class="ri-row"><span class="ri-k">FEATURE:</span><span class="ri-v" id="random-feature">—</span></div>
+            <div class="ri-row"><span class="ri-k">RESULT:</span><span class="ri-v rr-value" id="random-result">—</span></div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="neon-btn primary surprise-btn" data-action="surprise">
+            <span class="nb-text">✦ SURPRISE ME</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="history" aria-label="History log">
+    <div class="history-head">
+      <h3>// HISTORY LOG</h3>
+      <button id="history-clear" class="chip mini" title="Clear history">CLR</button>
+    </div>
+    <ul id="history-list" class="history-list"></ul>
+    <div class="history-empty" id="history-empty">No entries yet. Trigger a randomizer.</div>
+  </aside>
+
+  <footer class="foot">
+    <span>SYS::RNDMZR</span>
+    <span class="dot">•</span>
+    <span>CYBER · ARCADE</span>
+    <span class="dot">•</span>
+    <span id="clock">--:--:--</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
